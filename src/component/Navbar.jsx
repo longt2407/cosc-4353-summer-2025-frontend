@@ -22,7 +22,7 @@ function Navbar() {
 							<a>Register</a>
 						</li>
 						<li className="text-white ml-[20px] cursor-pointer">
-							<a>Event Management</a>
+							<a href="/admin/event">Event Management</a>
 						</li>
 					</ul>
 				</div>
