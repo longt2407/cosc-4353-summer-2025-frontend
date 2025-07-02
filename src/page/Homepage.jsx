@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 function Homepage() {
+	const navigate = useNavigate();
 	return (
 		<div className="flex flex-col justify-center h-full">
 			<div>
@@ -6,10 +8,16 @@ function Homepage() {
 					<span className="text-center">Please Log In To Continue</span>
 				</div>
 				<div className="text-center mt-[20px]">
-					<button className="px-3 py-2 text-white rounded cursor-pointer bg-blue-500 hover:bg-blue-700">
+					<button 
+						className="px-3 py-2 text-white rounded cursor-pointer bg-blue-500 hover:bg-blue-700"
+						onClick={() => navigate("/volunteer/login")}
+					>
 						Log In As Volunteer
 					</button>
-					<button className="px-3 py-2 text-white rounded cursor-pointer bg-blue-500 hover:bg-blue-600 ml-[20px]">
+					<button 
+						className="px-3 py-2 text-white rounded cursor-pointer bg-blue-500 hover:bg-blue-600 ml-[20px]"
+						onClick={() => navigate("/admin/login")}
+					>
 						Log In As Admin
 					</button>
 				</div>
