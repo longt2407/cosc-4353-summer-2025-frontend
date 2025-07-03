@@ -10,6 +10,8 @@ import AdminRegister from "../page/admin/AdminRegister";
 import AdminProfile from "../page/admin/AdminProfile";
 import EventList from "../page/admin/EventList";
 import EventCreate from "../page/admin/EventCreate";
+import EventEdit from "../page/admin/EventEdit";
+import EventAssign from "../page/admin/EventAssign";
 
 const MyRoute = () => (
     <>
@@ -26,6 +28,8 @@ const MyRoute = () => (
         <Route path="/admin/profile" element={<AdminProfile/>}></Route>
         <Route path="/admin/event" element={<EventList/>}></Route>
         <Route path="/admin/event/create" element={<EventCreate/>}></Route>
+        <Route path="/admin/event/edit" element={<EventEdit/>}></Route>
+        <Route path="/admin/event/assign" element={<EventAssign/>}></Route>
     </>
 );
 
