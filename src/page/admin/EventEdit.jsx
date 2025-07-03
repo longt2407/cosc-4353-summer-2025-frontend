@@ -1,4 +1,4 @@
-function NotFound() {
+function EventEdit() {
     return (
         <div className="p-[20px]">
             <h1 className="font-bold text-2xl text-center">Event edit</h1>
@@ -6,4 +6,4 @@ function NotFound() {
     );
 }
 
-export default NotFound;
+export default EventEdit;

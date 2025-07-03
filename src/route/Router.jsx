@@ -28,8 +28,8 @@ const MyRoute = () => (
         <Route path="/admin/profile" element={<AdminProfile/>}></Route>
         <Route path="/admin/event" element={<EventList/>}></Route>
         <Route path="/admin/event/create" element={<EventCreate/>}></Route>
-        <Route path="/admin/event/edit" element={<EventEdit/>}></Route>
-        <Route path="/admin/event/assign" element={<EventAssign/>}></Route>
+        <Route path="/admin/event/edit/:id" element={<EventEdit/>}></Route>
+        <Route path="/admin/event/assign/:id" element={<EventAssign/>}></Route>
     </>
 );
 
