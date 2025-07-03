@@ -1,13 +1,30 @@
 import { useNavigate } from "react-router-dom";
 
+const roleEnum = {
+	ADMIN: "admin",
+	VOLUNTEER: "volunteer"
+}
+
 function AdminLogin(){
     const navigate = useNavigate();
 
+    const submit  = (e) => {
+        e.preventDefault();
+        localStorage.setItem("is_login", "true");
+        localStorage.setItem("user", JSON.stringify({
+            role: roleEnum.ADMIN
+        }));
+        navigate("/admin/event")
+    }
+
     return(
-        <div className="flex justify-center items-center min-h-screen">
+        <div className="flex justify-center items-center h-full">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-6 text-center">Log In</h1>
-                <form className="space-y-4">
+                <h1 className="text-2xl font-bold mb-6 text-center">Admin Log In</h1>
+                <form 
+                    onSubmit={submit}
+                    className="space-y-4"
+                >
                     <div>
                         <label className="block text-gray-700 mb-1">Username</label>
                         <input
@@ -23,6 +40,11 @@ function AdminLogin(){
                             required
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
+                    </div>
+                    <div className="text-right">
+                        <span>
+                            <a href="/">Forget your password?</a>
+                        </span>
                     </div>
                     <button
                         type="submit"
