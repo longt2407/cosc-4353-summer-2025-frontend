@@ -40,7 +40,7 @@ function EventList() {
                             <th className="border px-6 py-2 text-left">Name</th>
                             <th className="border px-6 py-2 text-left">Location</th>
                             <th className="border px-6 py-2 text-left">Date</th>
-                            <th className="border px-6 py-2 text-left">Action</th>
+                            <th className="border px-6 py-2 text-left w-[150px]">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,15 +52,20 @@ function EventList() {
                                 <td className="border px-6 py-2 space-x-2">
                                     <a
                                         className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                                        href="/admin/event/edit/${event.id}"
+                                        href={`/admin/event/edit/${event.id}`}
                                     >
                                         Edit
                                     </a>
                                     <a
                                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                                        href="/admin/event/assign/${event.id}"
+                                        href={`/admin/event/assign/${event.id}`}
                                     >
                                         Assign
+                                    </a>
+                                    <a
+                                        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                    >
+                                        Remove
                                     </a>
                                 </td>
                             </tr>
