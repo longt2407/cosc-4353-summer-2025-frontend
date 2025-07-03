@@ -23,9 +23,9 @@ const events =[
 ];
 
 const allVolunteers =[
-    { id: 1, name: "Alice", assigned: true, skill: "communication", preferences: "Alex" },
-    { id: 2, name: "Bob", assigned: false, skill: "organization", preferences: "Alex" },
-    { id: 3, name: "Charlie", assigned: false, skill: "management", preferences: "Alex" },
+    { id: 1, name: "Alice", assigned: true, skills: ["communication", "technology"], preferences: "lorem ipsum" },
+    { id: 2, name: "Bob", assigned: false, skills: ["organization"], preferences: "lorem ipsum" },
+    { id: 3, name: "Charlie", assigned: false, skills: ["management"], preferences: "lorem ipsum" },
 ];
 
 function EventAssign(){
@@ -55,7 +55,7 @@ function EventAssign(){
     return(
         <div className="p-[20px] max-w-3xl mx-auto">
             <h1 className="font-bold text-2xl text-center mb-6">Event Assign</h1>
-            
+
             <div className="border border-gray-300 rounded-md p-4 mb-6 shadow-sm bg-white">
                 <h2 className="font-bold text-lg mb-4 border-b pb-2">Event Details</h2>
                 <ul className="space-y-2 text-base">
@@ -87,14 +87,25 @@ function EventAssign(){
                             assigned.map(v => (
                                 <tr key={v.id}>
                                     <td className="px-4 py-2 border">{v.name}</td>
-                                    <td className="px-4 py-2 border">{v.skill}</td>
+                                    <td className="px-4 py-2 border">
+                                        <div className="flex flex-wrap gap-2">
+                                            { v.skills.map((skill) =>
+                                                <div
+                                                    key={skill}
+                                                    className="items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
+                                                >
+                                                    <span>{skill}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-4 py-2 border">{v.preferences}</td>
                                     <td className="px-4 py-2 border text-center">
                                         <button
                                             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                                             onClick={() => handleRemove(v.id)}
                                         >
-                                            Remove
+                                            Drop
                                         </button>
                                     </td>
                                 </tr>
@@ -124,7 +135,18 @@ function EventAssign(){
                             unassigned.map(v => (
                                 <tr key={v.id}>
                                     <td className="px-4 py-2 border">{v.name}</td>
-                                    <td className="px-4 py-2 border">{v.skill}</td>
+                                    <td className="px-4 py-2 border">
+                                        <div className="flex flex-wrap gap-2">
+                                            { v.skills.map((skill) =>
+                                                <div
+                                                    key={skill}
+                                                    className="items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
+                                                >
+                                                    <span>{skill}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-4 py-2 border">{v.preferences}</td>
                                     <td className="px-4 py-2 border text-center">
                                         <button
