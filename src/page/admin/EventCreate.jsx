@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
 
 function EventCreate() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ function EventCreate() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen">
+        <div className="flex justify-center items-center h-full">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
                 <h1 className="text-2xl font-bold mb-6 text-center">Create New Event</h1>
                 <form
@@ -29,7 +30,7 @@ function EventCreate() {
                     onSubmit={(e) => {
                         e.preventDefault();
                         if (skills.length === 0){
-                            alert("Please add at least one required skill.");
+                            toast.error("Please add at least one required skill.");
                             return;
                         }
                         navigate("/admin/event");
@@ -46,8 +47,8 @@ function EventCreate() {
 
                     <div>
                         <label className="block text-gray-700 mb-1">Location</label>
-                        <input
-                            type="text"
+                        <textarea
+                            rows={1}
                             required
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
@@ -70,9 +71,9 @@ function EventCreate() {
                         <div className="flex-1">
                             <label className="block text-gray-700 mb-1">Date</label>
                             <input
-                            type="date"
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                type="date"
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
                     </div>
@@ -134,6 +135,7 @@ function EventCreate() {
                     </button>
                 </form>
             </div>
+            <ToastContainer/>
         </div>
     );
 }
