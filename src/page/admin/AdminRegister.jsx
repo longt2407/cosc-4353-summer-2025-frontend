@@ -19,38 +19,54 @@ function AdminRegister() {
     return(
         <div className="flex justify-center items-center h-full">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold mb-6 text-center">Create Admin Account</h1>
+                <div className="mb-6 ">
+                    <div className="text-2xl font-bold text-center">
+                        <span>Create Admin Account</span>
+                    </div>
+                </div>
                 <form 
                     onSubmit={submit}
                     className="space-y-4"
                 >
                     <div>
-                        <label className="block text-gray-700 mb-1">Username</label>
-                        <input
-                            type="text"
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="text-gray-700 mb-1">
+                            <span>Username</span>
+                        </div>
+                        <div>
+                            <input
+                                type="text"
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     </div>
                     <div>
-                        <label className="block text-gray-700 mb-1">Password</label>
-                        <input
-                            value={password}
-                            onChange={(e) => {setPassword(e.target.value)}}
-                            type="password"
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="text-gray-700 mb-1">
+                            <span>Password</span>
+                        </div>
+                        <div>
+                            <input
+                                value={password}
+                                onChange={(e) => {setPassword(e.target.value)}}
+                                type="password"
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     </div>
                     <div>
-                        <label className="block text-gray-700 mb-1">Confirm Your Password</label>
-                        <input
-                            value={confirmPassword}
-                            onChange={(e) => {setConfirmPassword(e.target.value)}}
-                            type="password"
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="text-gray-700 mb-1">
+                            <span>Confirm Your Password</span>
+                        </div>
+                        <div>
+                            <input
+                                value={confirmPassword}
+                                onChange={(e) => {setConfirmPassword(e.target.value)}}
+                                type="password"
+                                required
+                                className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     </div>
                     <button
                         type="submit"
@@ -60,7 +76,7 @@ function AdminRegister() {
                     </button>
                 </form>
             </div>
-            <ToastContainer />
+            <ToastContainer/>
         </div>
     );
 }

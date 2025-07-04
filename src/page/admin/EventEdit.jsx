@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
 
 const events =[
     {
@@ -64,7 +65,7 @@ function EventEdit(){
     }
 
     return(
-        <div className="flex justify-center items-center min-h-screen">
+        <div className="flex justify-center items-center h-full">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
                 <h1 className="text-2xl font-bold mb-6 text-center">Edit Event</h1>
                 <form
@@ -72,7 +73,7 @@ function EventEdit(){
                     onSubmit={(e) => {
                         e.preventDefault();
                         if (skills.length === 0){
-                            alert("Please add at least one required skill.");
+                            toast.error("Please add at least one required skill.");
                             return;
                         }
                         navigate("/admin/event");
@@ -181,6 +182,7 @@ function EventEdit(){
                     </button>
                 </form>
             </div>
+            <ToastContainer/>
         </div>
     );
 }

@@ -20,8 +20,8 @@ function Navbar() {
 
   	return (
 		<nav className="sticky top-0 z-50 bg-gray-800 w-full border-gray-200 p-[20px] flex justify-center">
-			<div className="flex container">
-				<div className="flex flex-row  grow">
+			<div className="flex justify-between container">
+				<div>
 					<div className="font-extrabold text-white">
 						<span>COSC4353</span>
 					</div>
@@ -38,9 +38,14 @@ function Navbar() {
 								</span>
 							</li>
 						)}
-						{ isLogin && (
+						{ isLogin && user.role === roleEnum.ADMIN && (
 							<li className="text-white ml-[20px] cursor-pointer">
-								<a>Profile</a>
+								<a href="/admin/profile">Profile</a>
+							</li>
+						)}
+						{ isLogin && user.role === roleEnum.VOLUNTEER && (
+							<li className="text-white ml-[20px] cursor-pointer">
+								<a href="/volunteer/profile">Profile</a>
 							</li>
 						)}
 						{ isLogin && user.role === roleEnum.VOLUNTEER && (
