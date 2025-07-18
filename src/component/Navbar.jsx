@@ -64,6 +64,12 @@ function Navbar() {
 						)}
 						{ isLogin && user.role === roleEnum.ADMIN && (
 							<li className="text-white ml-[20px] cursor-pointer">
+								<a href="/admin/volunteer-report">Reports</a>
+							</li>
+						)
+						}
+						{ isLogin && user.role === roleEnum.ADMIN && (
+							<li className="text-white ml-[20px] cursor-pointer">
 								<a href="/admin/event">Event Management</a>
 							</li>
 						)}
