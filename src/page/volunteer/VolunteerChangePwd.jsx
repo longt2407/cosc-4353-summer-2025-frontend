@@ -22,6 +22,7 @@ function VounteerChangePwd(){
                 },
                 { headers: { Authorization: token } }
             );
+            alert("Changes have been saved successfully!");
 			localStorage.clear();
             navigate("/volunteer/login");
         } catch(err) {

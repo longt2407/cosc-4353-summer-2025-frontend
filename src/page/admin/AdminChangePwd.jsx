@@ -22,8 +22,9 @@ function AdminChangePwd(){
                 },
                 { headers: { Authorization: token } }
             );
+			alert("Changes have been saved successfully!");
 			localStorage.clear();
-            navigate("/admin/login");
+            navigate("/admin/login");;
         } catch(err) {
             if (err.response) {
                 toast.error(err.response.data.message);
