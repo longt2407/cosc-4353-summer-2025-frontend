@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 const roleEnum = {
-	ADMIN: "admin",
-	VOLUNTEER: "volunteer"
+	VOLUNTEER: 0,
+	ADMIN: 1,
 }
 
 function Navbar() {
