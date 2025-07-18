@@ -9,7 +9,7 @@ function VolunteerRegister() {
 
     const submit  = (e) => {
         e.preventDefault();
-        if (password != confirmPassword) {
+        if (password !== confirmPassword) {
             toast.error("Passwords do not match!");
         } else {
             navigate("/volunteer/login");

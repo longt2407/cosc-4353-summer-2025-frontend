@@ -1,8 +1,10 @@
 import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function AdminProfile() {
+    const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const [profile, setProfile] = useState({
         first_name: "",
@@ -121,12 +123,22 @@ function AdminProfile() {
                         </div>
                     </div>
                     <div className="flex justify-between">
-                        <button
-                            type="button"
-                            className="bg-yellow-500 text-white py-2 px-2 rounded hover:bg-yellow-600"
-                        >
-                            Change password
-                        </button>
+                        <div>
+                            <button
+                                onClick={() => { navigate("/admin/change-password") }}
+                                type="button"
+                                className="bg-yellow-500 text-white py-2 px-2 rounded hover:bg-yellow-600"
+                            >
+                                Change password
+                            </button>
+                            <button
+                                onClick={() => { navigate("/admin/change-security-question") }}
+                                type="button"
+                                className="bg-yellow-500 text-white py-2 px-2 mx-2 rounded hover:bg-yellow-600"
+                            >
+                                Change security question
+                            </button>
+                        </div>
                         <button
                             type="submit"
                             className="bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600"

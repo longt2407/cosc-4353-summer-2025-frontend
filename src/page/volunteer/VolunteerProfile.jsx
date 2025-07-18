@@ -1,8 +1,10 @@
 import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function VolunteerProfile() {
+    const navigate = useNavigate();
     const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
     const token = localStorage.getItem("token");
     const [profile, setProfile] = useState({
@@ -377,9 +379,7 @@ function VolunteerProfile() {
                                     <input
                                         type="text"
                                         value={newSkill}
-                                        onChange={(e) =>
-                                            setNewSkill(e.target.value.replace(/[^A-Za-z]/g, ""))
-                                        }
+                                        onChange={(e) => setNewSkill(e.target.value.replace(/[^A-Za-z]/g, ""))}
                                         placeholder="Comminication"
                                         className="w-[160px] flex-grow px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
@@ -407,12 +407,22 @@ function VolunteerProfile() {
                         </div>
                     </div>
                     <div className="flex justify-between">
-                        <button
-                            type="button"
-                            className="bg-yellow-500 text-white py-2 px-2 rounded hover:bg-yellow-600"
-                        >
-                            Change password
-                        </button>
+                        <div>
+                            <button
+                                onClick={() => { navigate("/volunteer/change-password") }}
+                                type="button"
+                                className="bg-yellow-500 text-white py-2 px-2 rounded hover:bg-yellow-600"
+                            >
+                                Change password
+                            </button>
+                            <button
+                                onClick={() => { navigate("/volunteer/change-security-question") }}
+                                type="button"
+                                className="bg-yellow-500 text-white py-2 px-2 mx-2 rounded hover:bg-yellow-600"
+                            >
+                                Change security question
+                            </button>
+                        </div>
                         <button
                             type="submit"
                             className="bg-blue-500 text-white py-2 px-2 rounded hover:bg-blue-600"

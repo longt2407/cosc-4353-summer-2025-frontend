@@ -13,6 +13,12 @@ import EventList from "../page/admin/EventList";
 import EventCreate from "../page/admin/EventCreate";
 import EventEdit from "../page/admin/EventEdit";
 import EventAssign from "../page/admin/EventAssign";
+import VolunteerResetPwd from "../page/volunteer/VolunteerResetPwd";
+import VolunteerChangePwd from "../page/volunteer/VolunteerChangePwd";
+import VolunteerChangeQA from "../page/volunteer/VolunteerChangeQA";
+import AdminResetPwd from "../page/admin/AdminResetPwd";
+import AdminChangePwd from "../page/admin/AdminChangePwd";
+import AdminChangeQA from "../page/admin/AdminChangeQA";
 
 const MyRoute = () => (
     <>
@@ -23,6 +29,9 @@ const MyRoute = () => (
         <Route path="/volunteer/profile" element={<VolunteerProfile/>}></Route>
         <Route path="/volunteer/notification" element={<Notification/>}></Route>
         <Route path="/volunteer/history" element={<History/>}></Route>
+        <Route path="/volunteer/change-password" element={<VolunteerChangePwd/>}></Route>
+        <Route path="/volunteer/change-security-question" element={<VolunteerChangeQA/>}></Route>
+        <Route path="/volunteer/forget-password" element={<VolunteerResetPwd/>}></Route>
         {/* admin */}
         <Route path="/admin/login" element={<AdminLogin/>}></Route>
         <Route path="/admin/register" element={<AdminRegister/>}></Route>
@@ -32,6 +41,9 @@ const MyRoute = () => (
         <Route path="/admin/event/edit/:id" element={<EventEdit/>}></Route>
         <Route path="/admin/event/assign/:id" element={<EventAssign/>}></Route>
         <Route path="/admin/volunteer-report" element={<AdminReport/>}></Route>
+        <Route path="/admin/change-password" element={<AdminChangePwd/>}></Route>
+        <Route path="/admin/change-security-question" element={<AdminChangeQA/>}></Route>
+        <Route path="/admin/forget-password" element={<AdminResetPwd/>}></Route>
     </>
 );
 

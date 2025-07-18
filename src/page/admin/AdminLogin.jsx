@@ -68,7 +68,7 @@ function AdminLogin(){
                     </div>
                     <div className="text-right">
                         <span>
-                            <a href="/">Forget your password?</a>
+                            <a href="/admin/forget-password">Forget your password?</a>
                         </span>
                     </div>
                     <button
