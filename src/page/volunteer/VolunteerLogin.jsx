@@ -1,20 +1,41 @@
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const roleEnum = {
-	ADMIN: "admin",
-	VOLUNTEER: "volunteer"
-}
+import { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
 function VolunteerLogin(){
     const navigate = useNavigate();
+    const token = localStorage.getItem("token");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const submit  = (e) => {
-        e.preventDefault();
-        localStorage.setItem("is_login", "true");
-        localStorage.setItem("user", JSON.stringify({
-            role: roleEnum.VOLUNTEER
-        }));
-        navigate("/volunteer/notification")
+    const submit  = async (e) => {
+        try {
+            e.preventDefault();
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/volunteer/login`, 
+                {
+                    email, 
+                    password
+                },
+                {
+                    headers: {
+                        Authorization: token
+                    }
+                }
+            );
+            let data = res.data.data;
+            localStorage.setItem("is_login", "true");
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data));
+            navigate("/volunteer/notification")
+        } catch(err) {
+            if (err.response) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error(err.message);
+            }
+        }
     }
 
     return(
@@ -26,8 +47,10 @@ function VolunteerLogin(){
                     className="space-y-4"
                 >
                     <div>
-                        <label className="block text-gray-700 mb-1">Username</label>
+                        <label className="block text-gray-700 mb-1">Email</label>
                         <input
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             type="text"
                             required
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -36,6 +59,8 @@ function VolunteerLogin(){
                     <div>
                         <label className="block text-gray-700 mb-1">Password</label>
                         <input
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             type="password"
                             required
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -62,6 +87,7 @@ function VolunteerLogin(){
                     Register
                 </button>
             </div>
+            <ToastContainer/>
         </div>
     );
 }
