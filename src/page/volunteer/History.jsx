@@ -1,22 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
-const historyTypeEnum = {
-    VOLUNTEER: 'volunteer',
-    ADMIN: 'admin',
-    EVENT_STATUS: 'event status',
-    EVENT_SIGNUP: 'event signup',
-    EVENT_CANCEL: 'event canceled',
-    EVENT_CREATE: 'event created',
-    EVENT_UPDATE: 'event updated',
-    EVENT_DELETE: 'event deleted',
-    EVENT_COMPLETED: "completed",
-    EVENT_NO_SHOW: "no-show",
-    EVENT_CANCELED: "canceled",
-    VOLUNTEER_SIGNUP: 'volunteer signup',
-    VOLUNTEER_CANCEL: 'volunteer canceled',
-    VOLUNTEER_UPDATE: 'volunteer updated',
-    VOLUNTEER_DELETE: 'volunteer deleted',
-};
+import {useParams} from 'react-router-dom';
+import API from '../../utils/apiCall.jsx';
 
 //History that will be displayed
 function HistoryItem({item, onDelete}){
@@ -24,60 +8,36 @@ function HistoryItem({item, onDelete}){
         <div className="border p-4 mb-3 rounded shadow-sm bg-white flex justify-between items-center">
             <div>
                 <p className="font-medium">
-                    <span className="text-sm uppercase mr-2">[{historyTypeEnum[item.type] || 'GENERAL'}]</span>
-                    <span className="text-base">{item.eventLoc} - {item.title}</span>
+                    <span className="text-sm uppercase mr-2">[{item.type || 'GENERAL'}]</span>
+                    <span className="text-base">{item.event_name}</span>
                 </p>
 
-                <small className="block text-sm text-gray-500">{new Date(item.timestamp).toLocaleString()}</small>
-            </div>
-
-            <div>
-                <button onClick={() => onDelete(item.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
+                <small className="block text-sm text-gray-500">{new Date(item.date).toLocaleString()}</small>
             </div>
         </div>
     );
 }
 
 function History() {
+    const volunteerId = 1;
     const [historyList, setHistoryList] = useState([]);
     const [filteredList, setFilteredList] = useState([]);
     const [filters, setFilters] = useState({ type: 'ALL', eventLoc: '', time: 'DESC' });
 
     useEffect(() => {
-        const now = Date.now();
-        /*Hardcoded data for now*/
-        const rawHistory = [
-            {
-                id: 1,
-                type: 'EVENT_COMPLETED',
-                title: 'Volunteer Event A',
-                eventLoc: 'Houston',
-                timestamp: now - 10 * 60 * 1000,
-            },
-            {
-                id: 2,
-                type: 'EVENT_CANCELED',
-                title: 'Volunteer Event B',
-                eventLoc: 'Dallas',
-                timestamp: now - 20 * 60 * 1000,
-            },
-            {
-                id: 3,
-                type: 'EVENT_NO_SHOW',
-                title: 'Volunteer Event C',
-                eventLoc: 'Austin',
-                timestamp: now - 30 * 60 * 1000,
-            },
-            {
-                id: 4,
-                type: 'EVENT_COMPLETED',
-                title: 'Volunteer Event C',
-                eventLoc: 'Austin',
-                timestamp: now - 60 * 60 * 1000,
-            },
-        ];
-        setHistoryList(rawHistory);
-    }, []);
+        const fetchHistory = async () => {
+            try {
+                const response = await API.get(`/volunteer/history/${volunteerId}`);
+                console.log('API response:', response.data);
+                const data = response.data?.data?.events || [];
+
+                setHistoryList(data);
+            }catch(err){
+                console.log("Failed to fetch history: ", err.response?.data || err.message);
+            }
+        };
+        fetchHistory();
+    }, [volunteerId]);
 
     useEffect(() => {
         let filtered = [...historyList];
@@ -86,26 +46,16 @@ function History() {
             filtered = filtered.filter((item) => item.type === filters.type);
         }
 
-        if (filters.eventLoc.trim() !== '') {
-            filtered = filtered.filter((item) =>
-                item.eventLoc.toLowerCase().includes(filters.eventLoc.toLowerCase())
-            );
-        }
-
-        if (filters.time === 'ASC') {
-            //oldest first
-            filtered.sort((a, b) => a.timestamp - b.timestamp);
-        } else {
-            //newest first
-            filtered.sort((a, b) => b.timestamp - a.timestamp);
-        }
-
+        filtered.sort((a, b) => {
+            const aDate = new Date(a.date).getTime();
+            const bDate = new Date(b.date).getTime();
+            return filters.time === 'ASC' ? aDate - bDate : bDate - aDate;
+        });
         setFilteredList(filtered);
     }, [filters, historyList]);
 
     const handleDelete = (id) => {
-        const updated = historyList.filter((item) => item.id !== id);
-        setHistoryList(updated);
+        setHistoryList((prev) => prev.filter((item) => item.id !== id));
     };
 
     return (

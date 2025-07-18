@@ -8,6 +8,7 @@ import History from "../page/volunteer/History";
 import AdminLogin from "../page/admin/AdminLogin";
 import AdminRegister from "../page/admin/AdminRegister";
 import AdminProfile from "../page/admin/AdminProfile";
+import AdminReport from "../page/admin/AdminReport";
 import EventList from "../page/admin/EventList";
 import EventCreate from "../page/admin/EventCreate";
 import EventEdit from "../page/admin/EventEdit";
@@ -30,6 +31,7 @@ const MyRoute = () => (
         <Route path="/admin/event/create" element={<EventCreate/>}></Route>
         <Route path="/admin/event/edit/:id" element={<EventEdit/>}></Route>
         <Route path="/admin/event/assign/:id" element={<EventAssign/>}></Route>
+        <Route path="/admin/volunteer-report" element={<AdminReport/>}></Route>
     </>
 );
 
