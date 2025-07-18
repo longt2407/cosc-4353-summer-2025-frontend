@@ -1,51 +1,147 @@
 import { ToastContainer, toast } from 'react-toastify';
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+import axios from "axios";
 
 function VolunteerProfile() {
-    const [skills, setSkills] = useState([]);
-    const [newSkill, setNewSkill] = useState("");
-    const [availability, setAvailability] = useState([]);
-    const [newAvailability, setNewAvailability] = useState((new Date()).getTime());
     const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
+    const token = localStorage.getItem("token");
+    const [profile, setProfile] = useState({
+        first_name: "",
+        middle_name: "",
+        last_name: "",
+        address_1: "",
+        address_2: "",
+        address_city: "",
+        address_state: "",
+        address_zip: "",
+        skill: [],
+        preference: "",
+        availability: []
+    });
+    const [newSkill, setNewSkill] = useState("");
+    const [newAvailability, setNewAvailability] = useState((new Date()).getTime());
 
     const addAvailability = () =>{
-        if (!availability.includes(newAvailability + tzOffset)) {
-            setAvailability([...availability, newAvailability + tzOffset]);
+        let d1 = new Date(newAvailability + tzOffset);
+        let duplicate = profile.availability.find((date) => {
+            let d2 = new Date(date);
+            return d1.getFullYear() === d2.getFullYear()
+                && d1.getMonth() === d2.getMonth()
+                && d1.getDate() === d2.getDate();
+        });
+        if (!duplicate) {
+            setProfile((prev) => ({
+                ...prev,
+                availability: [...profile.availability, newAvailability + tzOffset],
+            }));
         }
     };
 
     const removeAvailability = (date) => {
-        setAvailability(availability.filter((d) => d !== date));
+        setProfile((prev) => ({
+            ...prev,
+            availability: profile.availability.filter((d) => d !== date),
+        }));
     };
 
     const addSkill = () =>{
         const val = newSkill;
         const isValid = /^[A-Za-z]+$/.test(val);
 
-        if (val && isValid && !skills.includes(val)) {
-            setSkills([...skills, val]);
+        if (val && isValid && !profile.skill.includes(val)) {
+            setProfile((prev) => ({
+                ...prev,
+                skill: [...profile.skill, val],
+            }));
             setNewSkill("");
         }
     };
 
     const removeSkill = (skill) =>{
-        setSkills(skills.filter((s) => s !== skill));
+        setProfile((prev) => ({
+            ...prev,
+            skill: profile.skill.filter((s) => s !== skill),
+        }));
     };
 
-    const submit = (e) => {
+    const getProfile = async () => {
+        try {
+            let res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/volunteer/profile`,
+                { headers: { Authorization: token } },
+            );
+            let data = res.data.data;
+            setProfile({
+                first_name: data.first_name,
+                middle_name: data.middle_name,
+                last_name: data.last_name,
+                address_1: data.address_1,
+                address_2: data.address_2,
+                address_city: data.address_city,
+                address_state: data.address_state,
+                address_zip: data.address_zip,
+                skill: data.skill,
+                preference: data.preference,
+                availability: data.availability
+            });
+        } catch (err) {
+            if (err.response) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error(err.message);
+            }
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProfile((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const submit = async (e) => {
         try {
             e.preventDefault();
-            if (availability.length < 1) {
+            if (profile.availability.length < 1) {
                 throw new Error("Please enter at least one availability date!")
             }
-            if (skills.length < 1) {
+            if (profile.skill.length < 1) {
                 throw new Error("Please add at least one skill!")
             }
+            let res = await axios.patch(
+                `${import.meta.env.VITE_API_URL}/volunteer/profile`,
+                {
+                    first_name: profile.first_name,
+                    middle_name: profile.middle_name,
+                    last_name: profile.last_name,
+                    address_1: profile.address_1,
+                    address_2: profile.address_2,
+                    address_city: profile.address_city,
+                    address_state: profile.address_state,
+                    address_zip: profile.address_zip,
+                    skill: profile.skill,
+                    preference: profile.preference,
+                    availability: profile.availability
+                },
+                { headers: { Authorization: token } },
+            );
+            let data = res.data.data;
+            localStorage.setItem("user", JSON.stringify(data));
             toast.success("Changes have been saved successfully!");
         } catch(err) {
-            toast.error(err.message);
+            if (err.response) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error(err.message);
+            }
         }
     }
+
+    useEffect(() => {
+        getProfile();
+    }, []);
 
     return (
         <div className="flex justify-center items-center h-full">
@@ -65,6 +161,9 @@ function VolunteerProfile() {
                                 <span>First Name</span>
                             </div>
                             <input
+                                name="first_name"
+                                value={profile.first_name}
+                                onChange={handleChange}
                                 type="text"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -75,6 +174,9 @@ function VolunteerProfile() {
                                 <span>Middle Name</span>
                             </div>
                             <input
+                                name="middle_name"
+                                value={profile.middle_name}
+                                onChange={handleChange}
                                 type="text"
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
@@ -84,6 +186,9 @@ function VolunteerProfile() {
                                 <span>Last Name</span>
                             </div>
                             <input
+                                name="last_name"
+                                value={profile.last_name}
+                                onChange={handleChange}
                                 type="text"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -96,6 +201,9 @@ function VolunteerProfile() {
                                 <span>Address 1</span>
                             </div>
                             <input
+                                name="address_1"
+                                value={profile.address_1}
+                                onChange={handleChange}
                                 type="text"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -106,6 +214,9 @@ function VolunteerProfile() {
                                 <span>Address 2</span>
                             </div>
                             <input
+                                name="address_2"
+                                value={profile.address_2}
+                                onChange={handleChange}
                                 type="text"
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
@@ -117,6 +228,9 @@ function VolunteerProfile() {
                                 <span>City</span>
                             </div>
                             <input
+                                name="address_city"
+                                value={profile.address_city}
+                                onChange={handleChange}
                                 type="text"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -127,6 +241,9 @@ function VolunteerProfile() {
                                 <span>State</span>
                             </div>
                             <select
+                                name="address_state"
+                                value={profile.address_state}
+                                onChange={handleChange}
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="AL">Alabama (AL)</option>
@@ -187,6 +304,9 @@ function VolunteerProfile() {
                                 <span>Zip code</span>
                             </div>
                             <input
+                                name="address_zip"
+                                value={profile.address_zip}
+                                onChange={handleChange}
                                 type="text"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -198,7 +318,7 @@ function VolunteerProfile() {
                             <span>Availability</span>
                         </div>
                         <div className="flex flex-wrap gap-2 gap-x-2">
-                                {availability.map((date) => (
+                                {profile.availability.map((date) => (
                                     <div
                                         key={date}
                                         className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
@@ -237,7 +357,7 @@ function VolunteerProfile() {
                                 <span>Skills</span>
                             </div>
                             <div className="flex flex-wrap gap-2 gap-x-2">
-                                {skills.map((skill) => (
+                                {profile.skill.map((skill) => (
                                     <div
                                         key={skill}
                                         className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
@@ -278,6 +398,9 @@ function VolunteerProfile() {
                         <div>
                             <label className="block text-gray-700 mb-1">Preferences</label>
                             <textarea
+                                name="preference"
+                                value={profile.preference}
+                                onChange={handleChange}
                                 rows={2}
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
