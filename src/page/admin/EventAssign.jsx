@@ -1,37 +1,34 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const events =[
-    {
-        id: 1,
-        name: 'Tech Conference 2025',
-        location: 'San Francisco, CA',
-        urgency: 'High',
-        date: '2025-08-12',
-        skills: ['communication'],
-        description: 'Introduce new technologies'
-    },
-    {
-        id: 2,
-        name: 'Art Expo 2025',
-        location: 'New York, NY',
-        urgency: 'Low',
-        date: '2025-09-05',
-        skills: ['communication'],
-        description: 'introduce new art'
-    },
-];
-
-const allVolunteers =[
+const allVolunteers = [
     { id: 1, name: "Alice", assigned: true, skills: ["communication", "technology"], preferences: "lorem ipsum" },
     { id: 2, name: "Bob", assigned: false, skills: ["organization"], preferences: "lorem ipsum" },
     { id: 3, name: "Charlie", assigned: false, skills: ["management"], preferences: "lorem ipsum" },
 ];
 
-function EventAssign(){
+function EventAssign() {
     const { id } = useParams();
-    const event = events.find(e => e.id === Number(id));
+    const token = localStorage.getItem("token");
+    const [event, setEvent] = useState(null);
     const [volunteers, setVolunteers] = useState(allVolunteers);
+
+    const getEvent = async (id, token, setEvent) => {
+    try {
+        const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/event/${id}`,
+        { headers: { Authorization: token } }
+        );
+        setEvent(res.data.data);
+    } catch (err) {
+        setEvent(null);
+    }
+    };
+
+    useEffect(() => {
+        getEvent(id, token, setEvent);
+    }, [id, token]);
 
     if (!event) {
         return <div className="p-[20px] text-center">Event not found.</div>;
@@ -40,19 +37,39 @@ function EventAssign(){
     const assigned = volunteers.filter(v => v.assigned);
     const unassigned = volunteers.filter(v => !v.assigned);
 
-    const handleAssign = (vid) =>{
-        setVolunteers(volunteers.map(v =>
-            v.id === vid ? { ...v, assigned: true } : v
-        ));
+    const handleAssign = async (vid) => {
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_API_URL}/event/${id}/assign`,
+                { event_id: Number(id), volunteer_id: vid },
+                { headers: { Authorization: token } }
+            );
+            setVolunteers(volunteers.map(v =>
+                v.id === vid ? { ...v, assigned: true } : v
+            ));
+            alert("Volunteer assigned!");
+        } catch (err) {
+            alert("Failed to assign volunteer.");
+        }
     };
 
-    const handleRemove = (vid) =>{
-        setVolunteers(volunteers.map(v =>
-            v.id === vid ? { ...v, assigned: false } : v
-        ));
+    const handleDrop = async (vid) => {
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_API_URL}/event/${id}/drop`,
+                { event_id: Number(id), volunteer_id: vid },
+                { headers: { Authorization: token } }
+            );
+            setVolunteers(volunteers.map(v =>
+                v.id === vid ? { ...v, assigned: false } : v
+            ));
+            alert("Volunteer dropped!");
+        } catch (err) {
+            alert("Failed to drop volunteer.");
+        }
     };
 
-    return(
+    return (
         <div className="p-[20px] max-w-3xl mx-auto">
             <h1 className="font-bold text-2xl text-center mb-6">Event Assign</h1>
 
@@ -61,9 +78,9 @@ function EventAssign(){
                 <ul className="space-y-2 text-base">
                     <li><strong>Name:</strong> {event.name}</li>
                     <li><strong>Location:</strong> {event.location}</li>
-                    <li><strong>Date:</strong> {event.date}</li>
-                    <li><strong>Urgency:</strong> {event.urgency}</li>
-                    <li><strong>Required Skills:</strong> {event.skills.join(", ")}</li>
+                    <li><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</li>
+                    <li><strong>Urgency:</strong> {["Low", "Medium", "High"][event.urgency] ?? event.urgency}</li>
+                    <li><strong>Required Skills:</strong> {event.skill ? event.skill.join(", ") : ""}</li>
                     <li><strong>Description:</strong> {event.description}</li>
                 </ul>
             </div>
@@ -89,7 +106,7 @@ function EventAssign(){
                                     <td className="px-4 py-2 border">{v.name}</td>
                                     <td className="px-4 py-2 border">
                                         <div className="flex flex-wrap gap-2">
-                                            { v.skills.map((skill) =>
+                                            {v.skills.map((skill) =>
                                                 <div
                                                     key={skill}
                                                     className="items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
@@ -103,7 +120,7 @@ function EventAssign(){
                                     <td className="px-4 py-2 border text-center">
                                         <button
                                             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                            onClick={() => handleRemove(v.id)}
+                                            onClick={() => handleDrop(v.id)}
                                         >
                                             Drop
                                         </button>
@@ -137,7 +154,7 @@ function EventAssign(){
                                     <td className="px-4 py-2 border">{v.name}</td>
                                     <td className="px-4 py-2 border">
                                         <div className="flex flex-wrap gap-2">
-                                            { v.skills.map((skill) =>
+                                            {v.skills.map((skill) =>
                                                 <div
                                                     key={skill}
                                                     className="items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"

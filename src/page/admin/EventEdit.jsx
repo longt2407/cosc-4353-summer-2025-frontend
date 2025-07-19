@@ -33,7 +33,7 @@ function EventEdit() {
                 description: data.description
             });
         } catch (err) {
-            alert("Event not found. Please use a valid event ID (e.g., 1 or 2).");
+            alert("Event not found");
             navigate("/admin/event");
         }
     };

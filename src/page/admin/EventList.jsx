@@ -8,8 +8,7 @@ function EventList() {
 
     const getEvents = async () => {
         try {
-            let res = await axios.get(
-                `${import.meta.env.VITE_API_URL}/event`,
+            let res = await axios.get(`${import.meta.env.VITE_API_URL}/event`,
                 { headers: { Authorization: token } },
             );
             let data = res.data.data;
