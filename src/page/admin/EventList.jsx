@@ -1,24 +1,31 @@
+import { useState, useEffect } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import axios from "axios";
+
 function EventList() {
-    const events = [
-        {
-            id: 1,
-            name: 'Tech Conference 2025',
-            location: 'San Francisco, CA',
-            urgency: 'High',
-            date: '2025-08-12',
-            skills: 'comminication',
-            desciption: 'Introduce new technologies'
-        },
-        {
-            id: 2,
-            name: 'Art Expo 2025',
-            location: 'New York, NY',
-            urgency: 'Low',
-            date: '2025-09-05',
-            skills: 'comminication',
-            desciption: 'introduce new art'
-        },
-    ];
+    const token = localStorage.getItem("token");
+    const [events, setEvents] = useState([]);
+
+    const getEvents = async () => {
+        try {
+            let res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/event`,
+                { headers: { Authorization: token } },
+            );
+            let data = res.data.data;
+            setEvents(data);
+        } catch (err) {
+            if (err.response) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error(err.message);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getEvents();
+    }, []);
 
     return (
         <div className="p-[20px]">
@@ -48,7 +55,9 @@ function EventList() {
                             <tr key={event.id}>
                                 <td className="border px-6 py-2">{event.name}</td>
                                 <td className="border px-6 py-2">{event.location}</td>
-                                <td className="border px-6 py-2">{event.date}</td>
+                                <td className="border px-6 py-2">
+                                    {event.date ? new Date(event.date).toLocaleDateString() : ""}
+                                </td>
                                 <td className="border px-6 py-2 space-x-2">
                                     <a
                                         className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
@@ -73,6 +82,7 @@ function EventList() {
                     </tbody>
                 </table>
             </div>
+            <ToastContainer/>
         </div>
     );
 }
