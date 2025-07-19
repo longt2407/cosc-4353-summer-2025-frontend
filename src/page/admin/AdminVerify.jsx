@@ -1,37 +1,18 @@
 import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-function AdminProfile() {
+function AdminVerify() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const verifyToken = searchParams.get('token'); 
     const [profile, setProfile] = useState({
         first_name: "",
         middle_name: "",
         last_name: ""
     });
-
-    const getProfile = async () => {
-        try {
-            let res = await axios.get(
-                `${import.meta.env.VITE_API_URL}/admin/profile`,
-                { headers: { Authorization: token } },
-            );
-            let data = res.data.data;
-            setProfile({
-                first_name: data.first_name,
-                middle_name: data.middle_name,
-                last_name: data.last_name,
-            });
-        } catch (err) {
-            if (err.response) {
-                toast.error(err.response.data.message);
-            } else {
-                toast.error(err.message);
-            }
-        }
-    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,18 +25,18 @@ function AdminProfile() {
     const submit = async (e) => {
         try {
             e.preventDefault();
-            let res = await axios.patch(
-                `${import.meta.env.VITE_API_URL}/admin/profile`,
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/admin/verify`,
                 {
+                    token: verifyToken,
                     first_name: profile.first_name,
                     middle_name: profile.middle_name,
-                    last_name: profile.last_name
+                    last_name: profile.last_name,
                 },
                 { headers: { Authorization: token } },
             );
-            let data = res.data.data;
-            localStorage.setItem("user", JSON.stringify(data));
-            toast.success("Changes have been saved successfully!");
+            alert("Account created successfully!");
+            navigate("/admin/login");
         } catch(err) {
             if (err.response) {
                 toast.error(err.response.data.message);
@@ -64,10 +45,6 @@ function AdminProfile() {
             }
         }
     }
-
-    useEffect(() => {
-        getProfile();
-    }, []);
 
     return (
         <div className="flex justify-center items-center h-full">
@@ -123,20 +100,6 @@ function AdminProfile() {
                     </div>
                     <div className="flex justify-between">
                         <div>
-                            <button
-                                onClick={() => { navigate("/admin/change-password") }}
-                                type="button"
-                                className="bg-yellow-500 text-white py-2 px-2 rounded hover:bg-yellow-600"
-                            >
-                                Change password
-                            </button>
-                            <button
-                                onClick={() => { navigate("/admin/change-security-question") }}
-                                type="button"
-                                className="bg-yellow-500 text-white py-2 px-2 mx-2 rounded hover:bg-yellow-600"
-                            >
-                                Change security question
-                            </button>
                         </div>
                         <button
                             type="submit"
@@ -152,4 +115,4 @@ function AdminProfile() {
     );
 }
 
-export default AdminProfile;
+export default AdminVerify;

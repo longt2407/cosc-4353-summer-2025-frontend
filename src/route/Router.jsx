@@ -19,6 +19,8 @@ import VolunteerChangeQA from "../page/volunteer/VolunteerChangeQA";
 import AdminResetPwd from "../page/admin/AdminResetPwd";
 import AdminChangePwd from "../page/admin/AdminChangePwd";
 import AdminChangeQA from "../page/admin/AdminChangeQA";
+import VolunteerVerify from "../page/volunteer/VolunteerVerify";
+import AdminVerify from "../page/admin/AdminVerify";
 
 const MyRoute = () => (
     <>
@@ -32,6 +34,7 @@ const MyRoute = () => (
         <Route path="/volunteer/change-password" element={<VolunteerChangePwd/>}></Route>
         <Route path="/volunteer/change-security-question" element={<VolunteerChangeQA/>}></Route>
         <Route path="/volunteer/forget-password" element={<VolunteerResetPwd/>}></Route>
+        <Route path="/volunteer/verify" element={<VolunteerVerify/>}></Route>
         {/* admin */}
         <Route path="/admin/login" element={<AdminLogin/>}></Route>
         <Route path="/admin/register" element={<AdminRegister/>}></Route>
@@ -44,6 +47,7 @@ const MyRoute = () => (
         <Route path="/admin/change-password" element={<AdminChangePwd/>}></Route>
         <Route path="/admin/change-security-question" element={<AdminChangeQA/>}></Route>
         <Route path="/admin/forget-password" element={<AdminResetPwd/>}></Route>
+        <Route path="/admin/verify" element={<AdminVerify/>}></Route>
     </>
 );
 

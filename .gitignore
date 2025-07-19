@@ -1,5 +1,5 @@
-!.env.development.example
 *.env.*
+!.env.development.example
 
 logs
 *.log
