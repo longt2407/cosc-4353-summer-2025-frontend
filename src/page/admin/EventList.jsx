@@ -23,6 +23,20 @@ function EventList() {
         }
     };
 
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this event?")) return;
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_API_URL}/event/${id}`,
+                { headers: { Authorization: token } }
+            );
+            setEvents(events.filter(e => e.id !== id));
+            alert("Event deleted!");
+        } catch (err) {
+            alert("Failed to delete event.");
+        }
+    };
+
     useEffect(() => {
         getEvents();
     }, []);
@@ -73,8 +87,9 @@ function EventList() {
                                     </a>
                                     <a
                                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                        onClick={() => handleDelete(event.id)}
                                     >
-                                        Remove
+                                        Delete
                                     </a>
                                 </td>
                             </tr>
