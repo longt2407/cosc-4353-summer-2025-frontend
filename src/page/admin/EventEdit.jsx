@@ -1,101 +1,115 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import axios from "axios";
 
-const events =[
-    {
-        id: 1,
-        name: 'Tech Conference 2025',
-        location: 'San Francisco, CA',
-        urgency: 'High',
-        date: '2025-08-12',
-        skills: ['comminication'],
-        description: 'Introduce new technologies'
-    },
-    {
-        id: 2,
-        name: 'Art Expo 2025',
-        location: 'New York, NY',
-        urgency: 'Low',
-        date: '2025-09-05',
-        skills: ['comminication'],
-        description: 'introduce new art'
-    },
-];
-
-function EventEdit(){
+function EventEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const event = events.find(e => e.id === Number(id));
-
-    const [name, setName] = useState("");
-    const [location, setLocation] = useState("");
-    const [urgency, setUrgency] = useState("");
-    const [date, setDate] = useState("");
-    const [skills, setSkills] = useState([]);
+    const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
+    const token = localStorage.getItem("token");
     const [newSkill, setNewSkill] = useState("");
-    const [description, setDescription] = useState("");
+    const [event, setEvent] = useState({
+        name: "",
+        location: "",
+        urgency: "",
+        date: "",
+        skill: [],
+        description: ""
+    });
 
-    useEffect(() =>{
-        if (event) {
-            setName(event.name);
-            setLocation(event.location);
-            setUrgency(event.urgency.toLowerCase());
-            setDate(event.date);
-            setSkills(event.skills);
-            setDescription(event.description);
+    const getEvent = async () => {
+        try {
+            let res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/event/${id}`,
+                { headers: { Authorization: token } }
+            );
+            let data = res.data.data;
+            setEvent({
+                name: data.name,
+                location: data.location,
+                urgency: data.urgency.toString(),
+                date: new Date(data.date).toISOString().substring(0, 10),
+                skill: data.skill,
+                description: data.description
+            });
+        } catch (err) {
+            alert("Event not found. Please use a valid event ID (e.g., 1 or 2).");
+            navigate("/admin/event");
         }
-    }, [event]);
+    };
+    useEffect(() => {
+        getEvent();
+    }, [id, token, navigate]);
 
-    const addSkill = () =>{
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setEvent(prev => ({ ...prev, [name]: value }));
+    };
+
+    const addSkill = () => {
         const val = newSkill;
         const isValid = /^[A-Za-z]+$/.test(val);
-        if (val && isValid && !skills.includes(val)) {
-            setSkills([...skills, val]);
+        if (val && isValid && !event.skill.includes(val)) {
+            setEvent(prev => ({ ...prev, skill: [...prev.skill, val] }));
             setNewSkill("");
         }
     };
-
-    const removeSkill = (skill) =>{
-        setSkills(skills.filter((s) => s !== skill));
+    const removeSkill = (skill) => {
+        setEvent(prev => ({ ...prev, skill: prev.skill.filter(s => s !== skill) }));
     };
 
-    if (!event){
-        return <div className="p-[20px] text-center">Event not found.</div>;
-    }
+    // Submit updated event
+    const submit = async (e) => {
+        e.preventDefault();
+        if (event.skill.length < 1) {
+            alert("Please add at least one skill!");
+            return;
+        }
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_API_URL}/event/${id}`,
+                {
+                    ...event,
+                    urgency: parseInt(event.urgency),
+                    date: new Date(event.date).getTime()
+                },
+                { headers: { Authorization: token } }
+            );
+            alert("Event updated successfully!");
+            navigate("/admin/event");
+        } catch (err) {
+            if (err.response) {
+                alert(err.response.data.message);
+            } else {
+                alert(err.message);
+            }
+        }
+    };
 
-    return(
+    return (
         <div className="flex justify-center items-center h-full">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
                 <h1 className="text-2xl font-bold mb-6 text-center">Edit Event</h1>
-                <form
-                    className="space-y-4"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        if (skills.length === 0){
-                            toast.error("Please add at least one required skill.");
-                            return;
-                        }
-                        navigate("/admin/event");
-                    }}
-                >
+                <form className="space-y-4" onSubmit={submit}>
                     <div>
                         <label className="block text-gray-700 mb-1">Name</label>
                         <input
+                            name="name"
+                            value={event.name}
+                            onChange={handleChange}
                             type="text"
                             required
-                            value={name}
-                            onChange={e => setName(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <div>
                         <label className="block text-gray-700 mb-1">Location</label>
                         <input
+                            name="location"
+                            value={event.location}
+                            onChange={handleChange}
                             type="text"
                             required
-                            value={location}
-                            onChange={e => setLocation(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -103,24 +117,26 @@ function EventEdit(){
                         <div className="flex-1">
                             <label className="block text-gray-700 mb-1">Urgency</label>
                             <select
+                                name="urgency"
+                                value={event.urgency}
+                                onChange={handleChange}
                                 required
-                                value={urgency}
-                                onChange={e => setUrgency(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
                                 <option value="">Select urgency</option>
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
+                                <option value="0">Low</option>
+                                <option value="1">Medium</option>
+                                <option value="2">High</option>
                             </select>
                         </div>
                         <div className="flex-1">
                             <label className="block text-gray-700 mb-1">Date</label>
                             <input
+                                name="date"
+                                value={event.date}
+                                onChange={handleChange}
                                 type="date"
                                 required
-                                value={date}
-                                onChange={e => setDate(e.target.value)}
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
@@ -128,7 +144,7 @@ function EventEdit(){
                     <div>
                         <label className="block text-gray-700 mb-1">Required Skills</label>
                         <div className="flex flex-wrap gap-2 gap-x-2">
-                            {skills.map((skill) => (
+                            {event.skill.map((skill) => (
                                 <div
                                     key={skill}
                                     className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
@@ -167,10 +183,11 @@ function EventEdit(){
                     <div>
                         <label className="block text-gray-700 mb-1">Description</label>
                         <textarea
+                            name="description"
+                            value={event.description}
+                            onChange={handleChange}
                             rows={4}
                             required
-                            value={description}
-                            onChange={e => setDescription(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -178,11 +195,10 @@ function EventEdit(){
                         type="submit"
                         className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
                     >
-                        Confirm
+                        Save
                     </button>
                 </form>
             </div>
-            <ToastContainer/>
         </div>
     );
 }
