@@ -68,7 +68,7 @@ function VolunteerLogin(){
                     </div>
                     <div className="text-right">
                         <span>
-                            <a href="/">Forget your password?</a>
+                            <a href="/volunteer/forget-password">Forget your password?</a>
                         </span>
                     </div>
                     <button
