@@ -29,7 +29,7 @@ function EventList() {
 
     return (
         <div className="p-[20px]">
-            <h1 className="font-bold text-2xl text-center mb-6">Event List</h1>
+            <h1 className="font-bold text-2xl text-center mb-6">Event Management</h1>
 
             <div className="text-center mb-6">
                 <a
