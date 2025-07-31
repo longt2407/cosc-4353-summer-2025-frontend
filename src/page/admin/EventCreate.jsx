@@ -59,7 +59,7 @@ function EventCreate() {
                     location: event.location,
                     skill: event.skill,
                     urgency: parseInt(event.urgency),
-                    date: event.date
+                    date: new Date(event.date).toISOString()
                 },
                 { headers: { Authorization: token } },
             );
