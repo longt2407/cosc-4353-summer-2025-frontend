@@ -99,7 +99,7 @@ function VolunteerVerify() {
                     address_zip: profile.address_zip,
                     skill: profile.skill,
                     preference: profile.preference,
-                    availability: profile.availability
+                    availability: profile.availability.map((a) => (new Date(a)).toISOString())
                 },
                 { headers: { Authorization: token } },
             );
