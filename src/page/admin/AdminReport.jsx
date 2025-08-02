@@ -14,9 +14,13 @@ useEffect(() => {
         setLoading(true);
         try {
             const res = await API.get('/volunteer/report/');
-            setVolunteers(res.data?.data || []);
+            const data = Array.isArray(res.data?.data) ? res.data.data : [];
+            setVolunteers(data);
+            setFilteredVolunteers(data);
         } catch (error) {
             console.error("Failed to fetch volunteer reports", error);
+            setVolunteers([]);
+            setFilteredVolunteers([]);
         } finally {
             setLoading(false);
         }
@@ -75,7 +79,6 @@ const toggleSort = (key) => {
                         <th className="border p-2">Middle Name</th>
                         <th onClick={() => toggleSort('volunteer_last_name')} className="cursor-pointer border p-2">Last Name {sortKey === 'volunteer_last_name' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                         <th className="border p-2">Email</th>
-                        <th className="border p-2">Note</th>
                         <th onClick={() => toggleSort('total_assigned_event')} className="cursor-pointer border p-2">Assigned {sortKey === 'total_assigned_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                         <th onClick={() => toggleSort('total_participated_event')} className="cursor-pointer border p-2">Participated {sortKey === 'total_participated_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                         <th onClick={() => toggleSort('total_no_show_event')} className="cursor-pointer border p-2">No Shows {sortKey === 'total_no_show_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
@@ -90,7 +93,6 @@ const toggleSort = (key) => {
                             <td className="border p-2">{v.volunteer_middle_name}</td>
                             <td className="border p-2">{v.volunteer_last_name}</td>
                             <td className="border p-2">{v.volunteer_email}</td>
-                            <td className="border p-2">{v.note}</td>
                             <td className="border p-2 text-center">{v.total_assigned_event}</td>
                             <td className="border p-2 text-center">{v.total_participated_event}</td>
                             <td className="border p-2 text-center">{v.total_no_show_event}</td>
