@@ -71,7 +71,7 @@ function EventEdit() {
                 {
                     ...event,
                     urgency: parseInt(event.urgency),
-                    date: new Date(event.date).getTime()
+                    date: new Date(event.date).toISOString()
                 },
                 { headers: { Authorization: token } }
             );
