@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../utils/apiCall';
 
-const notifTypeEnum = {
-    EVENT_UPDATE: 'EVENT UPDATE',
-    NEW_EVENT: 'NEW EVENT',
-    REMINDER: 'REMINDER',
-    EVENT_DELETE: 'EVENT CANCELED',
-    VOLUNTEER_DELETE: 'VOLUNTEER CANCELED',
-    VOLUNTEER_UPDATE: 'VOLUNTEER UPDATE',
-    VOLUNTEER_CREATE: 'VOLUNTEER ADDED',
-};
-
 //Parsing function for message string (Pulled info from DB later on or something similar)
 function NotifMessageStruc(notification) {
     const typeStr = notification.title || 'GENERAL';
@@ -54,11 +44,12 @@ function Notification() {
             try{
                 const response = await API.get(`/notification/${volunteerId}/notifications`);
                 console.log("Notification API response:", response.data);
-                const data = response.data.data || [];
+                const data = Array.isArray(response.data.data) ? response.data.data : [];
 
                 setNotif(data);
             }catch(err){
                 console.log("Failed to fetch notifications: ", err.response?.data || err.message);
+                setNotif([]);
             }
         }
 
