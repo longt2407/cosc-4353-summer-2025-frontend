@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import API from '../utils/apiCall.jsx';
 
 const roleEnum = {
 	VOLUNTEER: 0,
@@ -8,10 +9,25 @@ const roleEnum = {
 
 function Navbar() {
     const navigate = useNavigate();
-	// hardcoded for now until later implementation for notification (react context?)
-	const unreadCount = 3;
+	const [unreadCount, setUnreadCount] = useState(0);
 	const isLogin = JSON.parse(localStorage.getItem("is_login"));
 	const user =  JSON.parse(localStorage.getItem("user")) || {};
+
+	useEffect(() => {
+		if (isLogin && user.role === roleEnum.VOLUNTEER) {
+			const fetchUnreadCount = async () => {
+				try {
+			  		const res = await API.get(`/notifications/unread-count/${user.id}`);
+				  	//console.log("Unread count response:", res.data);
+					setUnreadCount(res.data.data.unreadCount || 0);
+				} catch (error) {
+				  console.error("Failed to fetch unread notifications count", error);
+				}
+			};
+
+		  fetchUnreadCount();
+		}
+	}, [isLogin, user.role]);
 
 	const logout = () => {
 		localStorage.clear();
