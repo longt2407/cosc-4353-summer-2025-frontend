@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import {useParams} from 'react-router-dom';
 import API from '../../utils/apiCall.jsx';
 
+const statusMap = {
+  0: 'ASSIGNED',
+  1: 'PARTICIPATED',
+  2: 'NO_SHOW',
+};
+
+const filterMap = {
+  ALL: null,
+  ASSIGNED: 0,
+  PARTICIPATED: 1,
+  NO_SHOW: 2,
+};
+
 //History that will be displayed
-function HistoryItem({item, onDelete}){
+function HistoryItem({item, onClick}){
     return(
-        <div className="border p-4 mb-3 rounded shadow-sm bg-white flex justify-between items-center">
+        <div className="border p-4 mb-3 rounded shadow-sm bg-white cursor-pointer hover:bg-gray-100" onClick={() => onClick(item)}>
             <div>
                 <p className="font-medium">
-                    <span className="text-sm uppercase mr-2">[{item.type || 'GENERAL'}]</span>
+                    <span className="text-sm uppercase mr-2">[{statusMap[item.type] || 'GENERAL'}]</span>
                     <span className="text-base">{item.event_name}</span>
                 </p>
 
@@ -23,6 +35,7 @@ function History() {
     const [historyList, setHistoryList] = useState([]);
     const [filteredList, setFilteredList] = useState([]);
     const [filters, setFilters] = useState({ type: 'ALL', eventLoc: '', time: 'DESC' });
+    const [selectedItem, setSelectedItem] = useState(null);
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -43,7 +56,11 @@ function History() {
         let filtered = [...historyList];
 
         if (filters.type !== 'ALL') {
-            filtered = filtered.filter((item) => item.type === filters.type);
+            filtered = filtered.filter((item) => item.type === filterMap[filters.type]);
+        }
+
+        if (filters.eventLoc) {
+            filtered = filtered.filter((item) => item.location?.toLowerCase().includes(filters.eventLoc.toLowerCase()));
         }
 
         filtered.sort((a, b) => {
@@ -54,12 +71,22 @@ function History() {
         setFilteredList(filtered);
     }, [filters, historyList]);
 
+    const closePopup = () => setSelectedItem(null);
+
     const handleDelete = (id) => {
         setHistoryList((prev) => prev.filter((item) => item.id !== id));
     };
 
+    const openModal = (item) => {
+        setSelectedItem(item);
+    };
+
+    const closeModal = () => {
+        setSelectedItem(null);
+    };
+
     return (
-        <div className="p-[20px]">
+        <div className="p-[20px] relative">
             <h1 className="font-bold text-2xl text-center mb-6">History</h1>
             {/* Filters */}
             <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 mb-6">
@@ -69,9 +96,9 @@ function History() {
                     onChange={(e) => setFilters((f) => ({ ...f, type: e.target.value }))}
                 >
                     <option value="ALL">All</option>
-                    <option value="EVENT_SIGNUP">Signed Up</option>
-                    <option value="EVENT_CANCEL">Canceled</option>
-                    <option value="HOURS_LOGGED">Hours Logged</option>
+                    <option value="ASSIGNED">Assigned</option>
+                    <option value="PARTICIPATED">Participated</option>
+                    <option value="NO_SHOW">No Show</option>
                 </select>
 
                 <input
@@ -93,7 +120,18 @@ function History() {
             </div>
 
             {filteredList.length === 0 ? (<p className="text-center text-gray-500">No history found.</p>) :
-                (filteredList.map((item) => (<HistoryItem key={item.id} item={item} onDelete={handleDelete} />)))}
+                (filteredList.map((item) => (<HistoryItem key={item.id} item={item} onClick={setSelectedItem} />)))}
+
+            {selectedItem && (
+                <div className="fixed top-20 right-10 z-50 w-96 bg-white border border-gray-300 rounded-lg shadow-lg p-6">
+                    <button className="absolute top-2 right-3 text-gray-500 hover:text-red-500 text-xl" onClick={closePopup} aria-label="Close details">&times;</button>
+                    <h3 className="text-xl font-semibold mb-2">{selectedItem.event_name}</h3>
+                    <p><strong>Status:</strong> {statusMap[selectedItem.type]}</p>
+                    <p><strong>Location:</strong> {selectedItem.location}</p>
+                    <p><strong>Date:</strong> {new Date(selectedItem.date).toLocaleString()}</p>
+                    <p><strong>Admin Email:</strong> {selectedItem.admin_email || 'N/A'}</p>
+                </div>
+          )}
         </div>
     );
 }
