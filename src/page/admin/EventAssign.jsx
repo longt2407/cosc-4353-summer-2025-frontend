@@ -140,7 +140,7 @@ function EventAssign() {
 
                 {/* Suggested Volunteers */}
                 <VolunteerTable
-                    title="Suggested Volunteers"
+                    title="All Volunteers"
                     volunteers={filteredSuggested}
                     actionLabel="Add"
                     onAction={handleAssign}
@@ -149,14 +149,14 @@ function EventAssign() {
                 />
 
                 {/* All Volunteers */}
-                <VolunteerTable
+                {/* <VolunteerTable
                     title="All Volunteers"
                     volunteers={filteredAll}
                     actionLabel="Add"
                     onAction={handleAssign}
                     emptyMessage="No volunteers found."
                     actionClass="bg-blue-500 hover:bg-blue-600"
-                />
+                /> */}
             </div>
     );
 }
@@ -174,11 +174,12 @@ function VolunteerTable({ title, volunteers, actionLabel, onAction, emptyMessage
             <table className="min-w-full border border-gray-300 mb-4">
                 <thead>
                     <tr className="bg-gray-100">
-                        <th className="px-4 py-2 border">Name</th>
-                        <th className="px-4 py-2 border">Skill</th>
-                        <th className="px-4 py-2 border">Preferences</th>
-                        {showStatus && <th className="px-4 py-2 border">Status</th>}
-                        <th className="px-4 py-2 border">Action</th>
+                        <th className="px-2 py-1 border">Name</th>
+                        <th className="px-2 py-1 border">Address</th>
+                        <th className="px-2 py-1 border">Availability</th>
+                        <th className="px-2 py-1 border">Skill</th>
+                        {showStatus && <th className="px-2 py-1 border">Status</th>}
+                        <th className="px-2 py-1 border">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -189,25 +190,36 @@ function VolunteerTable({ title, volunteers, actionLabel, onAction, emptyMessage
                     ) : (
                         volunteers.map(v => (
                             <tr key={v.id}>
-                                <td className="px-4 py-2 border">{v.first_name} {v.last_name}</td>
-                                <td className="px-4 py-2 border">
+                                <td className="px-2 py-1 border">{v.first_name} {v.last_name}</td>
+                                <td className="px-2 py-1 border">
+                                    {v.address_1}{v.address_2 ? " " + v.address_2: ""}, {v.address_city}, {v.address_state}, {v.address_zip}
+                                </td>
+                                <td className="px-2 py-1 border">
+                                    <div className="flex flex-wrap gap-2">
+                                        {(v.availability || []).map(a => (
+                                            <span key={a} className="bg-blue-100 text-blue-700 px-1 rounded">
+                                                {new Date(a).toLocaleDateString()}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </td>
+                                <td className="px-2 py-1 border">
                                     <div className="flex flex-wrap gap-2">
                                         {(v.skill || []).map(skill => (
-                                            <span key={skill} className="bg-blue-100 text-blue-700 px-3 py-1 rounded">
+                                            <span key={skill} className="bg-blue-100 text-blue-700 px-1 rounded">
                                                 {skill}
                                             </span>
                                         ))}
                                     </div>
                                 </td>
-                                <td className="px-4 py-2 border">{v.preference}</td>
                                 {showStatus && (
-                                    <td className="px-4 py-2 border text-center">
+                                    <td className="px-2 py-1 border text-center">
                                         <span className="px-2 py-1 rounded bg-gray-100 text-gray-800">
                                             {statusLabels[v.status] ?? v.status}
                                         </span>
                                     </td>
                                 )}
-                                <td className="px-4 py-2 border text-center">
+                                <td className="px-2 py-1 border text-center">
                                     <button
                                         className={`${actionClass} text-white px-3 py-1 rounded`}
                                         onClick={() => onAction(v.id)}
