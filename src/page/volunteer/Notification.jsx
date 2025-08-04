@@ -35,7 +35,8 @@ function NotificationItem({ notification, markAsRead, onDelete }) {
 //Components of the Notification
 function Notification() {
     const [notifications, setNotif] = useState([]);
-    const volunteerId = 1;
+	const user =  JSON.parse(localStorage.getItem("user")) || {};
+    const volunteerId = user.id;
 
     //filter for all, read, and unread will be added
 

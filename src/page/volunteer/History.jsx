@@ -31,7 +31,8 @@ function HistoryItem({item, onClick}){
 }
 
 function History() {
-    const volunteerId = 1;
+	const user =  JSON.parse(localStorage.getItem("user")) || {};
+    const volunteerId = user.id;
     const [historyList, setHistoryList] = useState([]);
     const [filteredList, setFilteredList] = useState([]);
     const [filters, setFilters] = useState({ type: 'ALL', eventLoc: '', time: 'DESC' });
