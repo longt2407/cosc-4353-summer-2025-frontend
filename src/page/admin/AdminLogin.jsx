@@ -87,7 +87,7 @@ function AdminLogin(){
                     Register
                 </button>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

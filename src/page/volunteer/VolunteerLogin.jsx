@@ -87,7 +87,7 @@ function VolunteerLogin(){
                     Register
                 </button>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }
