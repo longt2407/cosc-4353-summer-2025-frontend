@@ -15,6 +15,9 @@ useEffect(() => {
         try {
             const res = await API.get('/volunteer/report/');
             const data = Array.isArray(res.data?.data) ? res.data.data : [];
+            for (let d of data) {
+                d.total_event = d.total_assigned_event + d.total_participated_event + d.total_no_show_event
+            }
             setVolunteers(data);
             setFilteredVolunteers(data);
         } catch (error) {
@@ -82,6 +85,7 @@ const toggleSort = (key) => {
                         <th onClick={() => toggleSort('total_assigned_event')} className="cursor-pointer border p-2">Assigned {sortKey === 'total_assigned_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                         <th onClick={() => toggleSort('total_participated_event')} className="cursor-pointer border p-2">Participated {sortKey === 'total_participated_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                         <th onClick={() => toggleSort('total_no_show_event')} className="cursor-pointer border p-2">No Shows {sortKey === 'total_no_show_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
+                        <th onClick={() => toggleSort('total_event')} className="cursor-pointer border p-2">Total {sortKey === 'total_event' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -96,6 +100,7 @@ const toggleSort = (key) => {
                             <td className="border p-2 text-center">{v.total_assigned_event}</td>
                             <td className="border p-2 text-center">{v.total_participated_event}</td>
                             <td className="border p-2 text-center">{v.total_no_show_event}</td>
+                            <td className="border p-2 text-center">{v.total_event}</td>
                         </tr>
                       ))
                     )}
