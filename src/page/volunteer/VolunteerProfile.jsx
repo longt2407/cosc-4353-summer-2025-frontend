@@ -116,15 +116,15 @@ function VolunteerProfile() {
                 `${import.meta.env.VITE_API_URL}/volunteer/profile`,
                 {
                     first_name: profile.first_name,
-                    middle_name: profile.middle_name,
+                    middle_name: profile.middle_name && profile.middle_name.length !== 0 ? profile.middle_name : null,
                     last_name: profile.last_name,
                     address_1: profile.address_1,
-                    address_2: profile.address_2,
+                    address_2: profile.address_2 && profile.address_2.length !== 0 ? profile.address_2 : null,
                     address_city: profile.address_city,
                     address_state: profile.address_state,
                     address_zip: profile.address_zip,
                     skill: profile.skill,
-                    preference: profile.preference,
+                    preference: profile.preference && profile.preference.length !== 0 ? profile.preference : null,
                     availability: profile.availability
                 },
                 { headers: { Authorization: token } },
@@ -434,7 +434,7 @@ function VolunteerProfile() {
                     </div>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

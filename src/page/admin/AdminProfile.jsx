@@ -48,7 +48,7 @@ function AdminProfile() {
                 `${import.meta.env.VITE_API_URL}/admin/profile`,
                 {
                     first_name: profile.first_name,
-                    middle_name: profile.middle_name,
+                    middle_name: profile.middle_name && profile.middle_name.length !== 0 ? profile.middle_name : null,
                     last_name: profile.last_name
                 },
                 { headers: { Authorization: token } },
@@ -147,7 +147,7 @@ function AdminProfile() {
                     </div>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

@@ -99,7 +99,7 @@ function VolunteerVerify() {
                     address_zip: profile.address_zip,
                     skill: profile.skill,
                     preference: profile.preference,
-                    availability: profile.availability
+                    availability: profile.availability.map((a) => (new Date(a)).toISOString())
                 },
                 { headers: { Authorization: token } },
             );
@@ -389,7 +389,7 @@ function VolunteerVerify() {
                     </div>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

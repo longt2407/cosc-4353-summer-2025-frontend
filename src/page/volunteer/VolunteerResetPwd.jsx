@@ -126,7 +126,7 @@ function VolunteerResetPwd(){
 								<input
 									value={answer}
 									onChange={(e) => {setAnswer(e.target.value)}}
-									type="text"
+									type="password"
 									required
 									className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
@@ -169,7 +169,7 @@ function VolunteerResetPwd(){
 					</form>
 				)}
             </div>
-            <ToastContainer />
+            <ToastContainer position="bottom-right" />
         </div>
     );
 }
