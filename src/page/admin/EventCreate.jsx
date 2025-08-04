@@ -202,7 +202,7 @@ function EventCreate() {
                     </button>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

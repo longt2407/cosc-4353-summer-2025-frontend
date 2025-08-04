@@ -214,7 +214,7 @@ function VolunteerTable({ title, volunteers, actionLabel, onAction, emptyMessage
                                 </td>
                                 {showStatus && (
                                     <td className="px-2 py-1 border text-center">
-                                        <span className="px-2 py-1 rounded bg-gray-100 text-gray-800">
+                                        <span className="px-1 rounded bg-gray-100 text-gray-800">
                                             {statusLabels[v.status] ?? v.status}
                                         </span>
                                     </td>

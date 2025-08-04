@@ -434,7 +434,7 @@ function VolunteerProfile() {
                     </div>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

@@ -389,7 +389,7 @@ function VolunteerVerify() {
                     </div>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }

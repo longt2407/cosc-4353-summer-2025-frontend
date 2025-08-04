@@ -96,7 +96,7 @@ function EventList() {
                     </tbody>
                 </table>
             </div>
-            <ToastContainer/>
+            <ToastContainer position="bottom-right"/>
         </div>
     );
 }
