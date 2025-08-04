@@ -149,9 +149,19 @@ function EventAssign() {
                 <ul className="space-y-2 text-base">
                     <li><strong>Name:</strong> {event.name}</li>
                     <li><strong>Location:</strong> {event.location}</li>
-                    <li><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</li>
+                    <li><strong>Date:</strong>&nbsp; 
+                        <span className="bg-blue-100 px-1 rounded">
+                            {new Date(event.date).toLocaleDateString()}
+                        </span>
+                    </li>
                     <li><strong>Urgency:</strong> {["Low", "Medium", "High"][event.urgency] ?? event.urgency}</li>
-                    <li><strong>Required Skills:</strong> {event.skill ? event.skill.join(", ") : ""}</li>
+                    <li><strong>Required Skills:</strong>&nbsp;
+                        {(event.skill || []).map(skill => (
+                            <span key={skill} className="mr-1 bg-blue-100 px-1 rounded">
+                                {skill}
+                            </span>
+                        ))}
+                    </li>
                     <li><strong>Description:</strong> {event.description}</li>
                 </ul>
             </div>
@@ -221,6 +231,23 @@ function VolunteerTable({
     actionButtons = [],
     showStatus = false
 }) {
+    const token = localStorage.getItem("token");
+    const [showModal, setShowModal] = useState(false);
+    const [currentVolunteer, setCurrentVolunteer] = useState({});
+    const openModal = async (volunteerId) => {
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/volunteer/${volunteerId}`,
+                { headers: { Authorization: token } }
+            );
+            setCurrentVolunteer(res.data.data);
+            setShowModal(true);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to get volunteer detail.");
+        }
+    }
+
     return (
         <div className="mb-8">
             <h2 className="font-bold text-lg mb-2">{title}</h2>
@@ -250,7 +277,7 @@ function VolunteerTable({
                                 <td className="px-2 py-1 border">
                                     <div className="flex flex-wrap gap-1">
                                         {(v.availability || []).map(a => (
-                                            <span key={a} className="bg-blue-100 text-blue-700 px-1 rounded">
+                                            <span key={a} className="bg-blue-100 px-1 rounded">
                                                 {new Date(a).toLocaleDateString()}
                                             </span>
                                         ))}
@@ -259,7 +286,7 @@ function VolunteerTable({
                                 <td className="px-2 py-1 border">
                                     <div className="flex flex-wrap gap-1">
                                         {(v.skill || []).map(skill => (
-                                            <span key={skill} className="bg-blue-100 text-blue-700 px-1 rounded">
+                                            <span key={skill} className="bg-blue-100 px-1 rounded">
                                                 {skill}
                                             </span>
                                         ))}
@@ -273,12 +300,12 @@ function VolunteerTable({
                                             </span>
                                         )}
                                         {v.status === 1 && (
-                                            <span className="px-1 rounded bg-green-500 text-gray-800">
+                                            <span className="px-1 rounded bg-green-500">
                                                 {statusLabels[v.status] ?? v.status}
                                             </span>
                                         )}
                                         {v.status === 2 && (
-                                            <span className="px-1 rounded bg-yellow-500 text-gray-800">
+                                            <span className="px-1 rounded bg-yellow-500">
                                                 {statusLabels[v.status] ?? v.status}
                                             </span>
                                         )}
@@ -294,12 +321,66 @@ function VolunteerTable({
                                             {btn.label}
                                         </button>
                                     ))}
+                                    <button
+                                        className="bg-gray-200 hover:bg-gray-400 px-3 py-1 rounded"
+                                        onClick={() => { openModal(v.id); }}
+                                    >
+                                        Detail
+                                    </button>
                                 </td>
                             </tr>
                         ))
                     )}
                 </tbody>
             </table>
+            {/* Volunteer Detail Modal */}
+            {showModal && (
+                <div
+                    className="fixed top-0 left-0 w-screen h-screen flex justify-center items-center z-50"
+                    style={{ backgroundColor: "rgba(24, 24, 37, 0.7)" }}
+                >
+                    <div className="bg-gray-300 text-text p-6 rounded-2xl shadow-lg w-full max-w-2xl">
+                        <div className="">
+                            <h2 className="font-bold text-lg mb-4 border-b pb-2">Volunteer Details</h2>
+                            <ul className="space-y-2 text-base">
+                                <li><strong>Name:</strong>&nbsp;
+                                    {currentVolunteer.first_name}{currentVolunteer.middle_name ? " " + currentVolunteer.middle_name : ""} {currentVolunteer.last_name} 
+                                </li>
+                                <li><strong>Email:</strong> {currentVolunteer.email}</li>
+                                <li><strong>Address:</strong>&nbsp; 
+                                    {currentVolunteer.address_1}{currentVolunteer.address_2 ? " " + currentVolunteer.address_2: ""}, {currentVolunteer.address_city}, {currentVolunteer.address_state}, {currentVolunteer.address_zip}
+                                </li>
+                                <li><strong>Preference:</strong> {currentVolunteer.preference || "N/A"}</li>
+                                <li><strong>Skills:</strong>&nbsp;
+                                    {(currentVolunteer.skill || []).map(skill => (
+                                        <span key={skill} className="mr-1 bg-blue-100 px-1 rounded">
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </li>
+                                <li><strong>Availability:</strong>&nbsp;
+                                    {(currentVolunteer.availability || []).map(a => (
+                                        <span key={a} className="mr-1 bg-blue-100 px-1 rounded">
+                                            {new Date(a).toLocaleDateString()}
+                                        </span>
+                                    ))}
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex justify-end mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => { setShowModal(false); }}
+                                    className="px-2 rounded py-1 bg-gray-200 hover:bg-gray-400"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
