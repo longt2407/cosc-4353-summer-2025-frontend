@@ -17,9 +17,9 @@ function NotificationItem({ notification, markAsRead, onDelete }) {
     const textClass = isRead ? 'text-gray-700 font-normal' : 'font-bold';
     return (
         <div className="border p-4 mb-3 rounded shadow-sm bg-white">
-            <p className={`text-sm uppercase mr-2 ${textClass}`}>
-                <span className="text-sm uppercase mr-2">[{notification.title || 'GENERAL'}]:</span>
-                <span className={textClass}>{notification.message}</span>
+            <p className={`text-sm mr-2 ${textClass}`}>
+                <p className="text-sm uppercase mr-2">{notification.title || 'GENERAL'}</p>
+                <p className={textClass}>{notification.message}</p>
             </p>
 
             <small className="block text-sm text-gray-500"> {new Date(notification.created_at).toLocaleString()}</small>
