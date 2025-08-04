@@ -129,8 +129,10 @@ function History() {
                     <h3 className="text-xl font-semibold mb-2">{selectedItem.event_name}</h3>
                     <p><strong>Status:</strong> {statusMap[selectedItem.type]}</p>
                     <p><strong>Location:</strong> {selectedItem.location}</p>
-                    <p><strong>Date:</strong> {new Date(selectedItem.date).toLocaleString()}</p>
+                    <p><strong>Date:</strong> {new Date(selectedItem.date).toLocaleDateString()}</p>
+                    <p><strong>Admin Name:</strong> {[selectedItem.admin_first_name, selectedItem.admin_middle_name, selectedItem.admin_last_name].join(" ")}</p>
                     <p><strong>Admin Email:</strong> {selectedItem.admin_email || 'N/A'}</p>
+                    <p><strong>Description:</strong> {selectedItem.description || 'N/A'}</p>
                 </div>
           )}
         </div>
