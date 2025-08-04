@@ -56,8 +56,6 @@ function Notification() {
         fetchData();
     }, []);
 
-    const unreadCount = notifications.filter(n => !n.read).length;
-
     const handleMarkAsRead = async (id) => {
         try{
             const response = await API.put(`/notification/${volunteerId}/notifications/${id}`);
