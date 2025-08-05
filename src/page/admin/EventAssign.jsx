@@ -57,6 +57,8 @@ function EventAssign() {
     const [assigned, setAssigned] = useState([]);
     const [suggested, setSuggested] = useState([]);
     const [allVolunteers, setAllVolunteers] = useState([]);
+    const [assignedSearch, setAssignedSearch] = useState("");
+    const [allSearch, setAllSearch] = useState("");
 
     useEffect(() => {
         getEvent(id, token, setEvent);
@@ -170,6 +172,8 @@ function EventAssign() {
             <VolunteerTable
                 title="Assigned Volunteers"
                 volunteers={assigned}
+                search={assignedSearch}
+                setSearch={setAssignedSearch}
                 emptyMessage="No volunteers assigned."
                 showStatus={true}
                 actionButtons={[
@@ -191,10 +195,12 @@ function EventAssign() {
                 ]}
             />
 
-            {/* Suggested Volunteers */}
+            {/* All Volunteers */}
             <VolunteerTable
                 title="All Volunteers"
                 volunteers={filteredSuggested}
+                search={allSearch}
+                setSearch={setAllSearch}
                 emptyMessage="No suggested volunteers."
                 actionButtons={[
                     {
@@ -204,32 +210,20 @@ function EventAssign() {
                     }
                 ]}
             />
-
-            {/* All Volunteers */}
-            {/* <VolunteerTable
-                title="All Volunteers"
-                volunteers={filteredAll}
-                emptyMessage="No volunteers found."
-                actionButtons={[
-                    {
-                        label: "Add",
-                        onClick: handleAssign,
-                        className: "bg-blue-500 hover:bg-blue-600",
-                    }
-                ]}
-            /> */}
         </div>
     );
 }
 
-const statusLabels = {0: "Assigned", 1: "Participated", 2: "No Show"};
+const statusLabels = { 0: "Assigned", 1: "Participated", 2: "No Show" };
 
 function VolunteerTable({
     title,
     volunteers,
     emptyMessage,
     actionButtons = [],
-    showStatus = false
+    showStatus = false,
+    search = "",
+    setSearch = () => {}
 }) {
     const token = localStorage.getItem("token");
     const [showModal, setShowModal] = useState(false);
@@ -246,11 +240,46 @@ function VolunteerTable({
             console.error(err);
             alert("Failed to get volunteer detail.");
         }
-    }
+    };
+
+    const filteredVolunteers = volunteers.filter((v) => {
+        const statusText = statusLabels[v.status] || "";
+        const availabilityFormatted = (v.availability || []).map(date =>
+            new Date(date).toLocaleDateString()
+        );
+        const combined = [
+            v.first_name,
+            v.middle_name || "",
+            v.last_name,
+            v.email || "",
+            v.address_1 || "",
+            v.address_2 || "",
+            v.address_city || "",
+            v.address_state || "",
+            v.address_zip || "",
+            (v.skill || []).join(" "),
+            availabilityFormatted.join(" "),
+            statusText
+        ]
+        .join(" ")
+        .toLowerCase();
+        const searchWords = search.toLowerCase().split(" ").filter(Boolean);
+        return searchWords.every(word => combined.includes(word));
+    });
+
 
     return (
         <div className="mb-8">
-            <h2 className="font-bold text-lg mb-2">{title}</h2>
+            <div className="mb-2">
+                <h2 className="font-bold text-lg mb-1">{title}</h2>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="border px-2 py-1 rounded w-64"
+                />
+            </div>
             <table className="min-w-full border border-gray-300 mb-4">
                 <thead>
                     <tr className="bg-gray-100">
@@ -263,12 +292,12 @@ function VolunteerTable({
                     </tr>
                 </thead>
                 <tbody>
-                    {volunteers.length === 0 ? (
+                    {filteredVolunteers.length === 0 ? (
                         <tr>
-                            <td colSpan={showStatus ? 5 : 4} className="text-center py-2">{emptyMessage}</td>
+                            <td colSpan={showStatus ? 6 : 5} className="text-center py-2">{emptyMessage}</td>
                         </tr>
                     ) : (
-                        volunteers.map(v => (
+                        filteredVolunteers.map(v => (
                             <tr key={v.id}>
                                 <td className="px-2 py-1 border">{v.first_name} {v.last_name}</td>
                                 <td className="px-2 py-1 border">
@@ -322,7 +351,7 @@ function VolunteerTable({
                                         </button>
                                     ))}
                                     <button
-                                        className="bg-gray-200 hover:bg-gray-400 px-3 py-1 rounded"
+                                        className="mt-2 bg-gray-200 hover:bg-gray-400 px-3 py-1 rounded"
                                         onClick={() => { openModal(v.id); }}
                                     >
                                         Detail
@@ -333,6 +362,7 @@ function VolunteerTable({
                     )}
                 </tbody>
             </table>
+
             {/* Volunteer Detail Modal */}
             {showModal && (
                 <div
@@ -340,14 +370,14 @@ function VolunteerTable({
                     style={{ backgroundColor: "rgba(24, 24, 37, 0.7)" }}
                 >
                     <div className="bg-gray-300 text-text p-6 rounded-2xl shadow-lg w-full max-w-2xl">
-                        <div className="">
+                        <div>
                             <h2 className="font-bold text-lg mb-4 border-b pb-2">Volunteer Details</h2>
                             <ul className="space-y-2 text-base">
                                 <li><strong>Name:</strong>&nbsp;
-                                    {currentVolunteer.first_name}{currentVolunteer.middle_name ? " " + currentVolunteer.middle_name : ""} {currentVolunteer.last_name} 
+                                    {currentVolunteer.first_name}{currentVolunteer.middle_name ? " " + currentVolunteer.middle_name : ""} {currentVolunteer.last_name}
                                 </li>
                                 <li><strong>Email:</strong> {currentVolunteer.email}</li>
-                                <li><strong>Address:</strong>&nbsp; 
+                                <li><strong>Address:</strong>&nbsp;
                                     {currentVolunteer.address_1}{currentVolunteer.address_2 ? " " + currentVolunteer.address_2: ""}, {currentVolunteer.address_city}, {currentVolunteer.address_state}, {currentVolunteer.address_zip}
                                 </li>
                                 <li><strong>Preference:</strong> {currentVolunteer.preference || "N/A"}</li>
@@ -367,16 +397,14 @@ function VolunteerTable({
                                 </li>
                             </ul>
                         </div>
-                        <div className="space-y-3">
-                            <div className="flex justify-end mt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => { setShowModal(false); }}
-                                    className="px-2 rounded py-1 bg-gray-200 hover:bg-gray-400"
-                                >
-                                    Close
-                                </button>
-                            </div>
+                        <div className="flex justify-end mt-6">
+                            <button
+                                type="button"
+                                onClick={() => { setShowModal(false); }}
+                                className="px-2 rounded py-1 bg-gray-200 hover:bg-gray-400"
+                            >
+                                Close
+                            </button>
                         </div>
                     </div>
                 </div>
