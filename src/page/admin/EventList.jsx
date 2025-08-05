@@ -5,6 +5,7 @@ import axios from "axios";
 function EventList() {
     const token = localStorage.getItem("token");
     const [events, setEvents] = useState([]);
+    const [search, setSearch] = useState("");
 
     const getEvents = async () => {
         try {
@@ -40,17 +41,33 @@ function EventList() {
         getEvents();
     }, []);
 
+    const filteredEvents = events.filter(event =>
+        `${event.name} ${event.location} ${new Date(event.date).toLocaleDateString()}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+
     return (
         <div className="p-[20px]">
             <h1 className="font-bold text-2xl text-center mb-6">Event Management</h1>
 
-            <div className="text-center mb-6">
+            <div className="text-center mb-4">
                 <a
                     href="/admin/event/create"
                     className="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                 >
                     Create New Event
                 </a>
+            </div>
+
+            <div className="text-center mb-6">
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search..."
+                    className="border px-4 py-2 rounded w-80"
+                />
             </div>
 
             <div className="overflow-x-auto">
@@ -64,7 +81,7 @@ function EventList() {
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event) => (
+                        {filteredEvents.map((event) => (
                             <tr key={event.id}>
                                 <td className="border px-6 py-2">{event.name}</td>
                                 <td className="border px-6 py-2">{event.location}</td>
@@ -93,6 +110,11 @@ function EventList() {
                                 </td>
                             </tr>
                         ))}
+                        {filteredEvents.length === 0 && (
+                            <tr>
+                                <td colSpan="4" className="text-center py-4">No matching events found.</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
