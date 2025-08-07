@@ -1,18 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import moment from "moment";
 
 function EventEdit() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
     const token = localStorage.getItem("token");
     const [newSkill, setNewSkill] = useState("");
     const [event, setEvent] = useState({
         name: "",
         location: "",
         urgency: "",
-        date: "",
+        date: moment(),
         skill: [],
         description: ""
     });
@@ -28,7 +28,7 @@ function EventEdit() {
                 name: data.name,
                 location: data.location,
                 urgency: data.urgency.toString(),
-                date: new Date(data.date).toISOString().substring(0, 10),
+                date: moment(data.date),
                 skill: data.skill,
                 description: data.description
             });
@@ -71,7 +71,7 @@ function EventEdit() {
                 {
                     ...event,
                     urgency: parseInt(event.urgency),
-                    date: new Date(event.date).toISOString()
+                    date: event.date.toISOString()
                 },
                 { headers: { Authorization: token } }
             );
@@ -133,8 +133,13 @@ function EventEdit() {
                             <label className="block text-gray-700 mb-1">Date</label>
                             <input
                                 name="date"
-                                value={event.date}
-                                onChange={handleChange}
+                                value={event.date.format("YYYY-MM-DD")}
+                                onChange={(e) => { 
+                                    setEvent((prev) => ({
+                                        ...prev,
+                                        date: moment.utc(e.target.value + " " + "12:00:00", "YYYY-MM-DD HH:mm:ss")
+                                    }));
+                                }}
                                 type="date"
                                 required
                                 className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"

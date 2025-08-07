@@ -2,11 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
+import moment from "moment";
 
 function EventCreate() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
-    const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
     const [newSkill, setNewSkill] = useState("");
     const [event, setEvent] = useState({
         name: "",
@@ -14,7 +14,7 @@ function EventCreate() {
         location: "",
         skill: [],
         urgency: "",
-        date: (new Date()).getTime()
+        date: moment()
     });
 
     const addSkill = () =>{
@@ -59,7 +59,7 @@ function EventCreate() {
                     location: event.location,
                     skill: event.skill,
                     urgency: parseInt(event.urgency),
-                    date: new Date(event.date).toISOString()
+                    date: event.date.toISOString()
                 },
                 { headers: { Authorization: token } },
             );
@@ -128,11 +128,11 @@ function EventCreate() {
                             <label className="block text-gray-700 mb-1">Date</label>
                             <input
                                 name="date"
-                                value={(new Date(event.date)).toISOString().substring(0, 10)}
+                                value={event.date.format("YYYY-MM-DD")}
                                 onChange={(e) => { 
                                     setEvent((prev) => ({
                                         ...prev,
-                                        date: e.target.valueAsNumber + tzOffset
+                                        date: moment.utc(e.target.value + " " + "12:00:00", "YYYY-MM-DD HH:mm:ss")
                                     }));
                                 }}
                                 type="date"
