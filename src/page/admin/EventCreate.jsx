@@ -14,7 +14,7 @@ function EventCreate() {
         location: "",
         skill: [],
         urgency: "",
-        date: moment()
+        date: moment.utc(moment().format("YYYY-MM-DD") + " " + "12:00:00", "YYYY-MM-DD HH:mm:ss")
     });
 
     const addSkill = () =>{

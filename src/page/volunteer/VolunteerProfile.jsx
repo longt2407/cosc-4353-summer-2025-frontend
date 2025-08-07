@@ -2,10 +2,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import moment from 'moment';
 
 function VolunteerProfile() {
     const navigate = useNavigate();
-    const tzOffset = (new Date()).getTimezoneOffset() * 60 * 1000; // input type date is interpreted as a UTC time
     const token = localStorage.getItem("token");
     const [profile, setProfile] = useState({
         first_name: "",
@@ -21,20 +21,16 @@ function VolunteerProfile() {
         availability: []
     });
     const [newSkill, setNewSkill] = useState("");
-    const [newAvailability, setNewAvailability] = useState((new Date()).getTime());
+    const [newAvailability, setNewAvailability] = useState(moment.utc(moment().format("YYYY-MM-DD") + " " + "12:00:00", "YYYY-MM-DD HH:mm:ss"));
 
     const addAvailability = () =>{
-        let d1 = new Date(newAvailability + tzOffset);
         let duplicate = profile.availability.find((date) => {
-            let d2 = new Date(date);
-            return d1.getFullYear() === d2.getFullYear()
-                && d1.getMonth() === d2.getMonth()
-                && d1.getDate() === d2.getDate();
+            return date.isSame(newAvailability, "day")
         });
         if (!duplicate) {
             setProfile((prev) => ({
                 ...prev,
-                availability: [...profile.availability, newAvailability + tzOffset],
+                availability: [...profile.availability, newAvailability],
             }));
         }
     };
@@ -42,7 +38,7 @@ function VolunteerProfile() {
     const removeAvailability = (date) => {
         setProfile((prev) => ({
             ...prev,
-            availability: profile.availability.filter((d) => d !== date),
+            availability: profile.availability.filter((d) => !d.isSame(date, "day")),
         }));
     };
 
@@ -84,7 +80,7 @@ function VolunteerProfile() {
                 address_zip: data.address_zip,
                 skill: data.skill,
                 preference: data.preference,
-                availability: data.availability
+                availability: data.availability.map((a) => moment(a))
             });
         } catch (err) {
             if (err.response) {
@@ -125,7 +121,7 @@ function VolunteerProfile() {
                     address_zip: profile.address_zip,
                     skill: profile.skill,
                     preference: profile.preference && profile.preference.length !== 0 ? profile.preference : null,
-                    availability: profile.availability
+                    availability: profile.availability.sort((a, b) => a.diff(b)).map((a) => a.toISOString())
                 },
                 { headers: { Authorization: token } },
             );
@@ -327,7 +323,7 @@ function VolunteerProfile() {
                                         key={date}
                                         className="flex items-center bg-blue-100 text-blue-700 px-3 py-1 rounded"
                                     >
-                                        <span>{(new Date(date)).toLocaleDateString('en-US').substring(0, 10)}</span>
+                                        <span>{date.format("YYYY-MM-DD")}</span>
                                         <button
                                             type="button"
                                             onClick={() => removeAvailability(date)}
@@ -339,8 +335,8 @@ function VolunteerProfile() {
                                 ))}
                                 <div className="flex">
                                     <input
-                                        value={(new Date(newAvailability)).toISOString().substring(0, 10)}
-                                        onChange={(e) => setNewAvailability(e.target.valueAsNumber)}
+                                        value={newAvailability.format("YYYY-MM-DD")}
+                                        onChange={(e) => setNewAvailability(moment.utc(e.target.value + " " + "12:00:00", "YYYY-MM-DD HH:mm:ss"))}
                                         type="date"
                                         required
                                         className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
