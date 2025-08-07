@@ -137,6 +137,36 @@ function EventAssign() {
         }
     };
 
+    const exportPdf = async () => {
+        try {
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/report/event/${event.id}/pdf`,
+                {},
+                { headers: { Authorization: token } }
+            );
+            let fileToken = res.data.data;
+            window.location.assign(`${import.meta.env.VITE_API_URL}/report/download?token=${fileToken}`, "_blank");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to export pdf.");
+        }
+    }
+
+    const exportCsv = async () => {
+        try {
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/report/event/${event.id}/csv`,
+                {},
+                { headers: { Authorization: token } }
+            );
+            let fileToken = res.data.data;
+            window.location.assign(`${import.meta.env.VITE_API_URL}/report/download?token=${fileToken}`, "_blank");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to export csv.");
+        }
+    }
+
     if (!event) {
         return <div className="p-[20px] text-center">Event not found.</div>;
     }
@@ -166,6 +196,20 @@ function EventAssign() {
                     </li>
                     <li><strong>Description:</strong> {event.description}</li>
                 </ul>
+                <div className="flex justify-end space-x-2">
+                    <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                        onClick={exportPdf}
+                    >
+                        Export PDF
+                    </button>
+                    <button
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                        onClick={exportCsv}
+                    >
+                        Export CSV
+                    </button>
+                </div>
             </div>
 
             {/* Assigned Volunteers */}

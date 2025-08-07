@@ -80,7 +80,7 @@ function Navbar() {
 						)}
 						{ isLogin && user.role === roleEnum.ADMIN && (
 							<li className="text-white ml-[20px] cursor-pointer">
-								<a href="/admin/volunteer-report">Reports</a>
+								<a href="/admin/volunteer-report">Volunteer Report</a>
 							</li>
 						)
 						}

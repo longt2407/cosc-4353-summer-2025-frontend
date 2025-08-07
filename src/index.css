@@ -12,3 +12,7 @@ button {
 a {
     cursor: pointer;
 }
+
+:root {
+    --toastify-toast-bottom: max(var(--toastify-toast-offset) + 30px, env(safe-area-inset-bottom));
+}

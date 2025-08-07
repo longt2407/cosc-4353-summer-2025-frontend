@@ -33,7 +33,11 @@ function EventList() {
             setEvents(events.filter(e => e.id !== id));
             alert("Event deleted!");
         } catch (err) {
-            alert("Failed to delete event.");
+            if (err.response) {
+                toast.error(err.response.data.message);
+            } else {
+                toast.error(err.message);
+            }
         }
     };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../utils/apiCall.jsx';
+import axios from "axios";
 
 function AdminVolunteerReport() {
   const [volunteers, setVolunteers] = useState([]);
@@ -66,10 +67,57 @@ const toggleSort = (key) => {
     }
 };
 
+    const token = localStorage.getItem("token");
+
+    const exportPdf = async () => {
+        try {
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/report/volunteer/pdf`,
+                {},
+                { headers: { Authorization: token } }
+            );
+            let fileToken = res.data.data;
+            window.location.assign(`${import.meta.env.VITE_API_URL}/report/download?token=${fileToken}`, "_blank");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to export pdf.");
+        }
+    }
+
+    const exportCsv = async () => {
+        try {
+            let res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/report/volunteer/csv`,
+                {},
+                { headers: { Authorization: token } }
+            );
+            let fileToken = res.data.data;
+            window.location.assign(`${import.meta.env.VITE_API_URL}/report/download?token=${fileToken}`, "_blank");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to export csv.");
+        }
+    }
+
     return (
         <div className="p-6">
             <div className="flex justify-center mb-4">
                 <h1 className="text-3xl font-bold">Volunteer Reports</h1>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+                <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                    onClick={exportPdf}
+                >
+                    Export PDF
+                </button>
+                <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                    onClick={exportCsv}
+                >
+                    Export CSV
+                </button>
             </div>
 
             <input type="text" placeholder="Search by volunteer name..." value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className="border p-2 rounded w-full max-w-md mb-6"/>
