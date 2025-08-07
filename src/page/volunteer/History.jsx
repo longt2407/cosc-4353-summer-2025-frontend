@@ -24,7 +24,7 @@ function HistoryItem({item, onClick}){
                     <span className="text-base">{item.event_name}</span>
                 </p>
 
-                <small className="block text-sm text-gray-500">{new Date(item.date).toLocaleString()}</small>
+                <small className="block text-sm text-gray-500">{new Date(item.date).toLocaleDateString()}</small>
             </div>
         </div>
     );
