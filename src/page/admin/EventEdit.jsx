@@ -172,7 +172,7 @@ function EventEdit() {
                                     onChange={(e) =>
                                         setNewSkill(e.target.value.replace(/[^A-Za-z]/g, ""))
                                     }
-                                    placeholder="Communication"
+                                    placeholder="communication"
                                     className="w-[160px] flex-grow px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                                 <button
